@@ -16,7 +16,10 @@ def main():
         
 # Function to generate recommendations
 def generate_recommendations(song_name):
-    return recommendations
+
+# Filter songs by favorite artists
+    filtered_songs = df[df['artists'].apply(lambda x: any(artist in x for artist in user_input["favorite_artists"]))]
+        
 if __name__ == "__main__":
     main()        
   
