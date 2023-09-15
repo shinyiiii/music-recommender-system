@@ -41,24 +41,6 @@ def getNewPreferences(userName, database):
     prefs.sort()
     database[userName] = prefs
 
-
-
-
-def loadUsers(fileName):
-    """ will store information from fileName file to database dictionary"""
-    database = {}
-    try:
-        file = open(fileName, "r")
-        for line in file:
-            [userName, artists] = line.strip().split(":")
-            artistList = artists.split(",")
-            artistList.sort()
-            database[userName] = artistList
-        file.close()
-    except:
-        return database
-    return database
-
     
 def displayMenu(userName, database):
     """ presents display menu to user and gives options to user to lead them
@@ -73,62 +55,7 @@ def displayMenu(userName, database):
             getNewPreferences(userName, database)
         if option == "r":
             getRecommendations(userName, database)
-        
-
-
-
-    
-    
-
-        
-
-def findMostLikesUser(userName, database):
-    """returns a tuple of the user that likes the most amount of artists
-    and the number of likes the user has (ignoring private users) """
-    
-    usersList = []
-    for item in database:
-        usersList+=[item]
-    bestUser = []
-    for user in usersList:
-            if user[-1] != "$":
-                bestUser = user
-                break
-            
-    bestScore = len(database[bestUser])
-    for user in usersList:
-        score = len(database[user])
-        if score > bestScore and user[-1] != "$":
-            bestScore = score
-            bestUser = user
-            
-    return (bestUser, bestScore)
-    
-    
-def getHowPopular(userName, database):
-    """prints how popular the most popular artist is (ignoring private users)"""
-    freqdatabase = artistFrequencyDict(userName, database)
-    e = tupilizeDict(freqdatabase)
-    e.sort()
-    if len(e) == 0:
-        print("Sorry, no artists found.")
-    else:
-        print(freqdatabase[e[-1][1]])
-    
-def artistFrequencyDict(userName, database):
-    '''returns a dictionary of the frequency of artists'''
-    
-    artistsFrequency = {}
-    for item in database:
-        for j in database[item]:
-            if j in artistsFrequency and item[-1]!="$":
-                artistsFrequency[j] += 1
-            if j not in artistsFrequency and item[-1]!= "$":
-                artistsFrequency[j] = 1
-    return artistsFrequency
-
-
-
+  
     
 def getRecommendations(userName, database):
     """ provides a list of user recommendations (if they exist) to user"""
@@ -139,65 +66,6 @@ def getRecommendations(userName, database):
         recommendations = exclusiveListTwo(database[userName], database[bestUser])
         for thing in recommendations:
             print(thing)
-
-def findBestUser(userName, database):
-    """ finds a user in the database with the most amount of matches with
-    another user in the database (as long as the other user's preferences
-    are not a subset of the user's preference. If there is a tie, the first
-    other user is used as a match"""
-    usersList = []
-    for item in database:
-        if item[-1] != "$" and item!=userName and database[item]!=database[userName]:
-            usersList+=[item]
-    bestUser = None
-    bestScore = -1
-    for user in usersList:
-        score = numMatches(database[userName], database[user])
-        if score > bestScore:
-            bestScore = score
-            bestUser = user
-            
-    return bestUser
-
-
-def exclusiveListTwo(L1, L2):
-    """ returns all the elements in L2 that are not in L1"""
-    
-    L3 = [x for x in L2 if x not in L1]
-    return L3
-        
-def numMatches(L1, L2):
-    """ returns the number of matches of elements between two lists"""
-    
-    matches = 0
-    i = 0
-    j = 0
-    while i < len(L1) and j < len(L2):
-        if L1[i] == L2[j]:
-            matches+=1
-            i+=1
-            j+=1
-        elif L1[i] < L2[j]:
-            i+=1
-        else:
-            j+=1
-    return matches
-
-def removeDuplicates(L):
-    """ returns a list same as L but without any duplicates"""
-    final = []
-    for item in L:
-        if item not in final:
-            final+=[item]
-    return final
-
-def intro(database):
-    """ allows user to start inputting information"""
-    
-    userName = input("Enter your name (put a $ symbol after your name if you wish your preferences to remain private):" + "\n")
-    if userName not in database:
-        getPreferences(userName, database)
-    displayMenu(userName, database)
 
 def main():
     """main function, will perform entire project """
