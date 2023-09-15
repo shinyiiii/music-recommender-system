@@ -1,77 +1,75 @@
 import streamlit as st
 import pandas as pd
 
-# Define the Streamlit app
-def getPreferences(userName, database):
-    """ prompts user to enter their artist preferences.
-    Saves user and their preferences to database dictionary """
-    
-    newPref = ""
-    if userName in database:
-        prefs = database[userName]
+
+def get_song_album_cover_url(song_name, artist_name):
+    search_query = f"track:{song_name} artist:{artist_name}"
+    results = sp.search(q=search_query, type="track")
+
+    if results and results["tracks"]["items"]:
+        track = results["tracks"]["items"][0]
+        album_cover_url = track["album"]["images"][0]["url"]
+        print(album_cover_url)
+        return album_cover_url
     else:
-        prefs = []
-        newPref = input("Enter an artist that you like (Enter to finish):" + "\n")
+        return "https://i.postimg.cc/0QNxYz4V/social.png"
 
-    while newPref!= "":
-        prefs+= [newPref.strip().title()]
-        newPref = input("Enter an artist that you like (Enter to finish):" + "\n")
+def recommend(song):
+    index = music[music['song'] == song].index[0]
+    distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
+    recommended_music_names = []
+    recommended_music_posters = []
+    for i in distances[1:6]:
+        # fetch the movie poster
+        artist = music.iloc[i[0]].artist
+        print(artist)
+        print(music.iloc[i[0]].song)
+        recommended_music_posters.append(get_song_album_cover_url(music.iloc[i[0]].song, artist))
+        recommended_music_names.append(music.iloc[i[0]].song)
 
-    prefs.sort()
-    prefs = removeDuplicates(prefs)
-    for thing in database:
-                database[thing] = removeDuplicates(database[thing])
-    prefs.sort()
-    database[userName] = prefs
+    return recommended_music_names,recommended_music_posters
 
-def getNewPreferences(userName, database):
-    """ does same as getpreferences, but only if prompted in menu by inputting
-    e """
-    prefs = []
-    newPref = input("Enter an artist that you like (Enter to finish):" + "\n")
+st.header('Music Recommender System')
+music = pickle.load(open('df.pkl','rb'))
+similarity = pickle.load(open('similarity.pkl','rb'))
 
-    while newPref!= "":
-        prefs+= [newPref.strip().title()]
-        newPref = input("Enter an artist that you like (Enter to finish):" + "\n")
+music_list = music['song'].values
+selected_movie = st.selectbox(
+    "Type or select a song from the dropdown",
+    music_list
+)
 
-    prefs.sort()
-    prefs = removeDuplicates(prefs)
-    for thing in database:
-                database[thing] = removeDuplicates(database[thing])
-    prefs.sort()
-    database[userName] = prefs
+if st.button('Show Recommendation'):
+    recommended_music_names,recommended_music_posters = recommend(selected_movie)
+    col1, col2, col3, col4, col5= st.columns(5)
+    with col1:
+        st.text(recommended_music_names[0])
+        st.image(recommended_music_posters[0])
+    with col2:
+        st.text(recommended_music_names[1])
+        st.image(recommended_music_posters[1])
 
-    
-def displayMenu(userName, database):
-    """ presents display menu to user and gives options to user to lead them
-    to different actions """
-    while True:
-        print("Enter a letter to choose an option:")
-        print("e - Enter preferences")
-        print("r - Get recommendations")
-        
-        option = input()
-        if option == "e":
-            getNewPreferences(userName, database)
-        if option == "r":
-            getRecommendations(userName, database)
-  
-    
-def getRecommendations(userName, database):
-    """ provides a list of user recommendations (if they exist) to user"""
-    bestUser = findBestUser(userName, database)
-    if bestUser==None or database[userName]==[]:
-        print("No recommendations available at this time")
-    else:
-        recommendations = exclusiveListTwo(database[userName], database[bestUser])
-        for thing in recommendations:
-            print(thing)
+    with col3:
+        st.text(recommended_music_names[2])
+        st.image(recommended_music_posters[2])
+    with col4:
+        st.text(recommended_music_names[3])
+        st.image(recommended_music_posters[3])
+    with col5:
+        st.text(recommended_music_names[4])
+        st.image(recommended_music_posters[4])
 
 def main():
-    """main function, will perform entire project """
+     st.title("Music Recommendation App")
 
-    database = loadUsers("musicrecplus.txt")
-    intro(database)
+    # Text input for song selection
+    song_name = st.text_input("Enter a song name:")
+
+    # Button to generate recommendations
+    if st.button("Generate Recommendations"):
+        # Generate and display recommendations
+        recommendations = generate_recommendations(song_name)
+        st.write(recommendations)
     
 if __name__ == "__main__": main()    
   
