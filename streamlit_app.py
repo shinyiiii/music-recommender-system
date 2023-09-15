@@ -12,5 +12,10 @@ def main():
         # Generate and display recommendations
         recommendations = generate_recommendations(song_name)
         st.write(recommendations)
+
+    # Function to generate recommendations
+    def generate_recommendations(song_name):
       
-        
+  if __name__ == "__main__":
+    main()        
+      
