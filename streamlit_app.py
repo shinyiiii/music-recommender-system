@@ -1,5 +1,5 @@
 import streamlit as st
-pip install streamlit
+
 
 def main():
     st.title("Music Recommendation App")
