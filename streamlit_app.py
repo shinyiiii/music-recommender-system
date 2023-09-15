@@ -1,6 +1,17 @@
 import streamlit as st
 import pandas as pd
 
+import pickle
+import streamlit as st
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+
+CLIENT_ID = "70a9fb89662f4dac8d07321b259eaad7"
+CLIENT_SECRET = "4d6710460d764fbbb8d8753dc094d131"
+
+# Initialize the Spotify client
+client_credentials_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 def get_song_album_cover_url(song_name, artist_name):
     search_query = f"track:{song_name} artist:{artist_name}"
@@ -34,7 +45,7 @@ music = pickle.load(open('df.pkl','rb'))
 similarity = pickle.load(open('similarity.pkl','rb'))
 
 music_list = music['song'].values
-selected_movie = st.selectbox(
+selected_movie = st.selectbox()
     "Type or select a song from the dropdown",
     music_list
 )
@@ -58,18 +69,3 @@ if st.button('Show Recommendation'):
     with col5:
         st.text(recommended_music_names[4])
         st.image(recommended_music_posters[4])
-
-def main():
-     st.title("Music Recommendation App")
-
-    # Text input for song selection
-    song_name = st.text_input("Enter a song name:")
-
-    # Button to generate recommendations
-    if st.button("Generate Recommendations"):
-        # Generate and display recommendations
-        recommendations = generate_recommendations(song_name)
-        st.write(recommendations)
-    
-if __name__ == "__main__": main()    
-  
