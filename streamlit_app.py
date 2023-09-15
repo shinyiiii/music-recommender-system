@@ -1,71 +1,48 @@
 import streamlit as st
 import pandas as pd
 
-import pickle
-import streamlit as st
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 
-CLIENT_ID = "70a9fb89662f4dac8d07321b259eaad7"
-CLIENT_SECRET = "4d6710460d764fbbb8d8753dc094d131"
+# Define the Streamlit app
+def main():
+    st.title("Music Recommendation App")
 
-# Initialize the Spotify client
-client_credentials_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    # Text input for song selection
+    song_name = st.text_input("Enter a song name:")
 
-def get_song_album_cover_url(song_name, artist_name):
-    search_query = f"track:{song_name} artist:{artist_name}"
-    results = sp.search(q=search_query, type="track")
+    # Button to generate recommendations
+    if st.button("Generate Recommendations"):
+        # Generate and display recommendations
+        recommendations = generate_recommendations(song_name)
+        st.write(recommendations)
+        
+# Function to generate recommendations
+def generate_recommendations(song_name):
+   
+ # Filter songs by favorite artists
+    filtered_songs = df[df['artists'].apply(lambda x: any(artist in x for artist in user_input["favorite_artists"]))]
+    
+    
+    # Sort the filtered songs by some criteria (e.g., popularity, release date)
+    sorted_songs = filtered_songs.sort_values(by="popularity", ascending=False)
 
-    if results and results["tracks"]["items"]:
-        track = results["tracks"]["items"][0]
-        album_cover_url = track["album"]["images"][0]["url"]
-        print(album_cover_url)
-        return album_cover_url
-    else:
-        return "https://i.postimg.cc/0QNxYz4V/social.png"
+    # Get the top N recommended songs
+    recommended_songs = sorted_songs.head(user_input["number_of_recommendations"])
 
-def recommend(song):
-    index = music[music['song'] == song].index[0]
-    distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
-    recommended_music_names = []
-    recommended_music_posters = []
-    for i in distances[1:6]:
-        # fetch the movie poster
-        artist = music.iloc[i[0]].artist
-        print(artist)
-        print(music.iloc[i[0]].song)
-        recommended_music_posters.append(get_song_album_cover_url(music.iloc[i[0]].song, artist))
-        recommended_music_names.append(music.iloc[i[0]].song)
+    # You can return the recommended songs as a list of dictionaries
+    # Each dictionary should contain song information (e.g., name, artists)
+    recommendations = []
+    for index, row in recommended_songs.iterrows():
+        song_info = {
+            "name": row["name"],
+            "artists": row["artists"]
+        }
+        recommendations.append(song_info)
 
-    return recommended_music_names,recommended_music_posters
+    return recommendations
+    
+    recommendations = pd.DataFrame({"Song": ["Recommendation 1", "Recommendation 2", "Recommendation 3"]})
+    return recommendations
 
-st.header('Music Recommender System')
-music = pickle.load(open('df.pkl','rb'))
-similarity = pickle.load(open('similarity.pkl','rb'))
+if __name__ == "__main__":
+    main()        
 
-music_list = music['song'].values
-selected_movie = st.selectbox(
-    "Type or select a song from the dropdown",
-    music_list
-)
-
-if st.button('Show Recommendation'):
-    recommended_music_names,recommended_music_posters = recommend(selected_movie)
-    col1, col2, col3, col4, col5= st.columns(5)
-    with col1:
-        st.text(recommended_music_names[0])
-        st.image(recommended_music_posters[0])
-    with col2:
-        st.text(recommended_music_names[1])
-        st.image(recommended_music_posters[1])
-
-    with col3:
-        st.text(recommended_music_names[2])
-        st.image(recommended_music_posters[2])
-    with col4:
-        st.text(recommended_music_names[3])
-        st.image(recommended_music_posters[3])
-    with col5:
-        st.text(recommended_music_names[4])
-        st.image(recommended_music_posters[4])
