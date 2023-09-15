@@ -18,9 +18,9 @@ def generate_recommendations(song_name, num_recommendations):
     st.subheader(f"Top {num_recommendations} Recommendations for '{song_name}':")
     for i in range(num_recommendations):
         st.write(f"Recommendation {i + 1}:")
-        st.write(f"Song Name: {recommended_song_name}")
-        st.write(f"Artist(s): {recommended_artists}")
-        st.write(f"Similarity Score: {recommended_similarity_score}")
+        st.write(f"Song Name: {song_name}")
+        st.write(f"Artist(s): {artists}")
+        st.write(f"Similarity Score: {similarity_score}")
         st.write("---")
     
    
