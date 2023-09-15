@@ -16,8 +16,7 @@ def main():
         
 # Function to generate recommendations
 def generate_recommendations(song_name):
-   
+    return recommendations
 if __name__ == "__main__":
     main()        
   
-      
