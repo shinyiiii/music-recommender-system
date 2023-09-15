@@ -4,19 +4,25 @@ import pandas as pd
 
 # Define the Streamlit app
 def main():
-    st.title("Music Recommendation App")
+    st.title("Music Recommendation System")
 
-    # Text input for song selection
-    song_name = st.text_input("Enter a song name:")
+    # Add a sidebar to take user input
+    song_name = st.sidebar.text_input("Enter a Song Name", value="Sample Song Name")
+    num_recommendations = st.sidebar.slider("Number of Recommendations", 1, 10, 5)
 
-    # Button to generate recommendations
-    if st.button("Generate Recommendations"):
-        # Generate and display recommendations
-        recommendations = generate_recommendations(song_name)
-        st.write(recommendations)
+    if st.sidebar.button("Get Recommendations"):
+        generate_recommendations(song_name, num_recommendations)
         
 # Function to generate recommendations
-def generate_recommendations(song_name):
+def generate_recommendations(song_name, num_recommendations):   
+    st.subheader(f"Top {num_recommendations} Recommendations for '{song_name}':")
+    for i in range(num_recommendations):
+        st.write(f"Recommendation {i + 1}:")
+        st.write(f"Song Name: {recommended_song_name}")
+        st.write(f"Artist(s): {recommended_artists}")
+        st.write(f"Similarity Score: {recommended_similarity_score}")
+        st.write("---")
+    
    
  # Filter songs by favorite artists
     filtered_songs = df[df['artists'].apply(lambda x: any(artist in x for artist in user_input["favorite_artists"]))]
