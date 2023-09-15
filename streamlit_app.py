@@ -41,15 +41,7 @@ def getNewPreferences(userName, database):
     prefs.sort()
     database[userName] = prefs
 
-def saveUserPreferences(userName, prefs, database, fileName):
-    """ saves user preferences to the fileName file"""
-    
-    userMap[userName] = prefs
-    file = open(fileName, "w")
-    for user in database:
-        toSave = str(user) + ":" + ",".join(database[user])+ "\n"
-        file.write(toSave)
-    file.close()
+
 
 
 def loadUsers(fileName):
@@ -75,46 +67,19 @@ def displayMenu(userName, database):
         print("Enter a letter to choose an option:")
         print("e - Enter preferences")
         print("r - Get recommendations")
-        print("p - Show most popular artists")
-        print("h - How popular is the most popular")
-        print("m - Which user has the most likes")
-        print("q - Save and quit")
-
+        
         option = input()
         if option == "e":
             getNewPreferences(userName, database)
         if option == "r":
             getRecommendations(userName, database)
-        if option == "p":
-            getMostPopularArtists(userName, database)
-        if option == "h":
-            getHowPopular(userName, database)
-        if option == "m":
-            userThatLikesMost(userName, database)
-        if option == "q":
-            saveUserPreferences(userName, database[userName], database, "musicrecplus.txt")
-            break
+        
 
 
-def saveUserPreferences(userName, prefs, database, fileName):
-    """saves and quits the program. writes updated prefs for userName from
-    the database into the fileName file"""
-    
-    file = open(fileName, "w")
-    for user in database:
-        toSave = user + ":" + ",".join(database[user]) + "\n"
-        file.write(toSave)
-    file.close()
+
     
     
-def userThatLikesMost(userName, database):
-    """prints the name of the user that ilkes the most artists
-    ignoring private users if there is a user that likes the most."""
-    
-    if findMostLikesUser(userName, database)[1] == 0:
-        print("Sorry, no user found")
-    else:
-        print(findMostLikesUser(userName, database)[0])
+
         
 
 def findMostLikesUser(userName, database):
@@ -162,31 +127,7 @@ def artistFrequencyDict(userName, database):
                 artistsFrequency[j] = 1
     return artistsFrequency
 
-def getMostPopularArtists(userName, database):
-    """prints the top three artists in the database of users and the artists
-    they listen to. calculations ignore private users"""
-    
-    freqdatabase = artistFrequencyDict(userName, database)
-    e = tupilizeDict(freqdatabase)
-    e.sort()
-    if len(e) == 0:
-        print("Sorry, no artists found.")
-    elif len(e) < 3:
-        for i in range(-1, -len(e)-1, -1):
-            print(e[i][1])
-    else:
-        print(e[-1][1])
-        print(e[-2][1])
-        print(e[-3][1])
-    
-def tupilizeDict(d):
-    '''
-    Changes dictionary to a list of tuples and also reverses the dictionary's key and value 
-    '''
-    LofTuples = []
-    for thing in d:
-        LofTuples += [(d[thing], thing)]
-    return LofTuples
+
 
     
 def getRecommendations(userName, database):
