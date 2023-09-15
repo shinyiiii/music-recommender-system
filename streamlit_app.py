@@ -6,10 +6,11 @@ def main():
 
     # Text input for song selection
     song_name = st.text_input("Enter a song name:")
-
+    
     # Button to generate recommendations
     if st.button("Generate Recommendations"):
-      
+        # Generate and display recommendations
         recommendations = generate_recommendations(song_name)
         st.write(recommendations)
-   
+      
+        
